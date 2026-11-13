@@ -13,6 +13,8 @@
 - [x] Atualização da listagem e dos indicadores após operações.
 - [x] Feedback visual de sucesso e erro.
 - [x] Melhoria visual para indicar quando o botão de marcação múltipla está desabilitado.
+- [x] Bônus: filtro por competência, permitindo combinações com os demais filtros.
+- [x] Bônus: seleção de todas as entregas disponíveis na listagem, com contador atualizado e indicação de seleção parcial.
 
 ## Decisões tomadas
 
