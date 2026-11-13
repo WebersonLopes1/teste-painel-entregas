@@ -139,9 +139,41 @@ function renderizarTabela() {
     </tr>
   `).join('');
 }
+async function carregarOpcoes() {
+  try {
+    const resposta = await fetch(`${API}/opcoes.php`);
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      mostrarAviso(dados.erro || 'Erro ao carregar opções.', 'erro');
+      return;
+    }
+
+    const campoEmpresa = document.getElementById('cadastro-empresa');
+    const campoObrigacao = document.getElementById('cadastro-obrigacao');
+
+    dados.empresas.forEach(empresa => {
+      const opcao = document.createElement('option');
+      opcao.value = empresa.id;
+      opcao.textContent = empresa.razao_social;
+      campoEmpresa.appendChild(opcao);
+    });
+
+    dados.obrigacoes.forEach(obrigacao => {
+      const opcao = document.createElement('option');
+      opcao.value = obrigacao.id;
+      opcao.textContent = obrigacao.nome;
+      campoObrigacao.appendChild(opcao);
+    });
+
+  } catch (erro) {
+    mostrarAviso('Erro ao carregar empresas e obrigações.', 'erro');
+  }
+}
 
 carregarResumo();
 carregarEntregas();
+carregarOpcoes();
 
 document.getElementById('form-filtros').addEventListener('submit', function(evento) {
   evento.preventDefault();
@@ -151,4 +183,39 @@ document.getElementById('form-filtros').addEventListener('submit', function(even
 document.getElementById('limpar-filtros').addEventListener('click', function() {
   document.getElementById('form-filtros').reset();
   carregarEntregas();
+});
+
+document.getElementById('form-cadastro').addEventListener('submit', async function(evento) {
+  evento.preventDefault();
+
+  const dados = {
+    empresa_id: document.getElementById('cadastro-empresa').value,
+    obrigacao_id: document.getElementById('cadastro-obrigacao').value,
+    competencia: document.getElementById('cadastro-competencia').value,
+    vencimento: document.getElementById('cadastro-vencimento').value
+  };
+
+  try {
+    const resposta = await fetch(`${API}/cadastrar_entrega.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados)
+    });
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      mostrarAviso(resultado.erro || 'Erro ao cadastrar entrega.', 'erro');
+      return;
+    }
+
+    mostrarAviso(resultado.mensagem);
+    evento.target.reset();
+
+    await carregarEntregas();
+    await carregarResumo();
+
+  } catch (erro) {
+    mostrarAviso('Erro de comunicação com a API.', 'erro');
+  }
 });

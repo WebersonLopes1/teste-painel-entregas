@@ -77,6 +77,67 @@ public function marcarComoEntregue(int $id): bool
     return $consulta->rowCount() > 0;
 }
 
+public function listarEmpresas(): array
+{
+    $sql = "SELECT id, razao_social
+            FROM empresas
+            ORDER BY razao_social";
+
+    return $this->pdo->query($sql)->fetchAll();
+}
+
+public function listarObrigacoes(): array
+{
+    $sql = "SELECT id, nome, departamento
+            FROM obrigacoes
+            ORDER BY nome";
+
+    return $this->pdo->query($sql)->fetchAll();
+}
+
+public function cadastrar(int $empresaId, int $obrigacaoId, string $competencia, string $vencimento): void
+{
+    // Verifica se a empresa e a obrigação existem.
+    $consulta = $this->pdo->prepare(
+        "SELECT
+            (SELECT COUNT(*) FROM empresas WHERE id = ?) AS empresas,
+            (SELECT COUNT(*) FROM obrigacoes WHERE id = ?) AS obrigacoes"
+    );
+    $consulta->execute([$empresaId, $obrigacaoId]);
+    $dados = $consulta->fetch();
+
+    if (!$dados['empresas'] || !$dados['obrigacoes']) {
+        throw new InvalidArgumentException('Empresa ou obrigação inválida.');
+    }
+
+    // Impede cadastrar a mesma obrigação duas vezes na mesma competência.
+    $consulta = $this->pdo->prepare(
+        "SELECT COUNT(*) FROM entregas
+         WHERE empresa_id = ?
+           AND obrigacao_id = ?
+           AND competencia = ?"
+    );
+    $consulta->execute([$empresaId, $obrigacaoId, $competencia]);
+
+    if ($consulta->fetchColumn() > 0) {
+        throw new InvalidArgumentException('Esta entrega já está cadastrada para esta competência.');
+    }
+
+    // Insere a nova entrega ainda não concluída.
+    $consulta = $this->pdo->prepare(
+        "INSERT INTO entregas
+         (empresa_id, obrigacao_id, competencia, vencimento, data_entrega)
+         VALUES (?, ?, ?, ?, NULL)"
+    );
+
+    $consulta->execute([
+        $empresaId,
+        $obrigacaoId,
+        $competencia,
+        $vencimento
+    ]);
+}
+
 
     public function resumo(): array
     {

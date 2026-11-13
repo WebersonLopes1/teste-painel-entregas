@@ -33,6 +33,38 @@
         <span class="resumo__rotulo">Atrasadas</span>
       </div>
     </section>
+    
+<section class="cadastro">
+  <h2>Nova entrega</h2>
+
+  <form id="form-cadastro" class="filtros">
+    <label class="campo">
+      Empresa
+      <select id="cadastro-empresa" required>
+        <option value="">Selecione uma empresa</option>
+      </select>
+    </label>
+
+    <label class="campo">
+      Obrigação
+      <select id="cadastro-obrigacao" required>
+        <option value="">Selecione uma obrigação</option>
+      </select>
+    </label>
+
+    <label class="campo">
+      Competência
+      <input type="month" id="cadastro-competencia" required>
+    </label>
+
+    <label class="campo">
+      Vencimento
+      <input type="date" id="cadastro-vencimento" required>
+    </label>
+
+    <button type="submit" class="botao">Cadastrar entrega</button>
+  </form>
+</section>
 
 <form id="form-filtros" class="filtros">
   <label class="campo campo--busca">
@@ -83,7 +115,7 @@
           </tr>
         </thead>
         <tbody id="lista-entregas">
-          <tr><td colspan="7" class="tabela__vazio">Carregando entregas…</td></tr>
+          <tr><td colspan="8" class="tabela__vazio">Carregando entregas…</td></tr>
         </tbody>
       </table>
     </div>
