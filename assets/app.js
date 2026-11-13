@@ -243,6 +243,18 @@ function atualizarSelecionadas() {
 
   botao.disabled = quantidade === 0;
   botao.textContent = `Marcar selecionadas como entregues (${quantidade})`;
+
+  const todas = document.querySelectorAll('.selecionar-entrega');
+  const selecionarTodas = document.getElementById('selecionar-todas');
+
+  selecionarTodas.checked =
+  todas.length > 0 && quantidade === todas.length;
+
+  selecionarTodas.indeterminate =
+  quantidade > 0 && quantidade < todas.length;
+
+  selecionarTodas.disabled = todas.length === 0;
+
 }
 
 document.getElementById('lista-entregas').addEventListener('change', function(evento) {
@@ -283,4 +295,14 @@ document.getElementById('marcar-selecionadas').addEventListener('click', async f
   } catch (erro) {
     mostrarAviso('Erro de comunicação com a API.', 'erro');
   }
+});
+
+document.getElementById('selecionar-todas').addEventListener('change', function() {
+  const caixas = document.querySelectorAll('.selecionar-entrega');
+
+  caixas.forEach(caixa => {
+    caixa.checked = this.checked;
+  });
+
+  atualizarSelecionadas();
 });
