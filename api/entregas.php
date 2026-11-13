@@ -8,11 +8,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 try {
     $repositorio = new EntregaRepository(Database::conexao());
+
     responderJson($repositorio->listar(
-    $_GET['empresa'] ?? '',
-    $_GET['departamento'] ?? '',
-    $_GET['status'] ?? ''
-));
+        $_GET['empresa'] ?? '',
+        $_GET['departamento'] ?? '',
+        $_GET['status'] ?? '',
+        $_GET['competencia'] ?? ''
+    ));
+
 } catch (Throwable $e) {
     responderErro($e);
 }

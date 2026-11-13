@@ -7,11 +7,14 @@ class EntregaRepository
     }
 
     
+
 public function listar(
     string $empresa = '',
     string $departamento = '',
-    string $status = ''
+    string $status = '',
+    string $competencia = ''
 ): array {
+
     $sql = "SELECT e.id,
                    e.competencia,
                    e.vencimento,
@@ -37,6 +40,12 @@ public function listar(
         $sql .= " AND o.departamento = :departamento";
         $parametros['departamento'] = $departamento;
     }
+
+    if ($competencia !== '') {
+    $sql .= " AND e.competencia = :competencia";
+    $parametros['competencia'] = $competencia;
+    }
+
 
     if ($status === 'entregue') {
         $sql .= " AND e.data_entrega IS NOT NULL";
@@ -158,7 +167,7 @@ public function marcarVariasComoEntregues(array $ids): int
     return $consulta->rowCount();
 }
 
-    public function resumo(): array
+public function resumo(): array
     {
         $sql = "SELECT COUNT(*) AS total,
                        COALESCE(SUM(data_entrega IS NOT NULL), 0) AS entregues,

@@ -83,11 +83,14 @@ async function carregarResumo() {
 async function carregarEntregas() {
   try {
 
+
 const parametros = new URLSearchParams({
   empresa: document.getElementById('filtro-empresa').value.trim(),
   departamento: document.getElementById('filtro-departamento').value,
-  status: document.getElementById('filtro-status').value
+  status: document.getElementById('filtro-status').value,
+  competencia: document.getElementById('filtro-competencia').value
 });
+
 
 const resposta = await fetch(`${API}/entregas.php?${parametros}`);
     const dados = await resposta.json();
