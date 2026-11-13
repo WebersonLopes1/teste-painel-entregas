@@ -64,6 +64,19 @@ public function listar(
     return $entregas;
 }
 
+public function marcarComoEntregue(int $id): bool
+{
+    $sql = "UPDATE entregas
+            SET data_entrega = CURDATE()
+            WHERE id = :id
+              AND data_entrega IS NULL";
+
+    $consulta = $this->pdo->prepare($sql);
+    $consulta->execute(['id' => $id]);
+
+    return $consulta->rowCount() > 0;
+}
+
 
     public function resumo(): array
     {

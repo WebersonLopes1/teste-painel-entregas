@@ -38,6 +38,29 @@ function mostrarAviso(mensagem, tipo = 'sucesso') {
   mostrarAviso.timer = setTimeout(() => { aviso.hidden = true; }, 4000);
 }
 
+async function marcarEntrega(id) {
+  try {
+    const resposta = await fetch(`${API}/marcar_entrega.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      mostrarAviso(dados.erro || 'Erro ao marcar entrega.', 'erro');
+      return;
+    }
+
+    mostrarAviso(dados.mensagem);
+    await carregarEntregas();
+    await carregarResumo();
+  } catch (erro) {
+    mostrarAviso('Erro de comunicação com a API.', 'erro');
+  }
+}
+
 async function carregarResumo() {
   try {
     const resposta = await fetch(`${API}/resumo.php`);
@@ -87,7 +110,7 @@ function renderizarTabela() {
   const corpo = document.getElementById('lista-entregas');
 
   if (entregas.length === 0) {
-    corpo.innerHTML = '<tr><td colspan="7" class="tabela__vazio">Nenhuma entrega encontrada.</td></tr>';
+    corpo.innerHTML = '<tr><td colspan="8" class="tabela__vazio">Nenhuma entrega encontrada.</td></tr>';
     return;
   }
 
@@ -103,6 +126,16 @@ function renderizarTabela() {
       <td>${formatarData(entrega.vencimento)}</td>
       <td>${formatarData(entrega.data_entrega)}</td>
       <td><span class="status status--${entrega.status}">${rotulosStatus[entrega.status]}</span></td>
+
+<td>
+  ${entrega.status !== 'entregue'
+    ? `<button class="botao botao--secundario"
+        onclick="marcarEntrega(${entrega.id})">
+        Marcar como entregue
+       </button>`
+    : '—'}
+</td>
+
     </tr>
   `).join('');
 }
