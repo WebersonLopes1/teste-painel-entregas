@@ -34,6 +34,40 @@
       </div>
     </section>
 
+<form id="form-filtros" class="filtros">
+  <label class="campo campo--busca">
+    Empresa
+    <input type="text" id="filtro-empresa"
+           placeholder="Buscar empresa">
+  </label>
+
+  <label class="campo">
+    Departamento
+    <select id="filtro-departamento">
+      <option value="">Todos</option>
+      <option value="Fiscal">Fiscal</option>
+      <option value="Pessoal">Pessoal</option>
+      <option value="Contábil">Contábil</option>
+    </select>
+  </label>
+
+  <label class="campo">
+    Status
+    <select id="filtro-status">
+      <option value="">Todos</option>
+      <option value="pendente">Pendente</option>
+      <option value="atrasada">Atrasada</option>
+      <option value="entregue">Entregue</option>
+    </select>
+  </label>
+
+  <button type="submit" class="botao">Filtrar</button>
+  <button type="button" id="limpar-filtros"
+          class="botao botao--secundario">
+    Limpar filtros
+  </button>
+</form>
+
     <div class="tabela-container">
       <table class="tabela">
         <thead>

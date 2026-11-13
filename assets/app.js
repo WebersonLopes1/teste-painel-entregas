@@ -59,7 +59,14 @@ async function carregarResumo() {
 
 async function carregarEntregas() {
   try {
-    const resposta = await fetch(`${API}/entregas.php`);
+
+const parametros = new URLSearchParams({
+  empresa: document.getElementById('filtro-empresa').value.trim(),
+  departamento: document.getElementById('filtro-departamento').value,
+  status: document.getElementById('filtro-status').value
+});
+
+const resposta = await fetch(`${API}/entregas.php?${parametros}`);
     const dados = await resposta.json();
 
     if (!resposta.ok) {
@@ -102,3 +109,13 @@ function renderizarTabela() {
 
 carregarResumo();
 carregarEntregas();
+
+document.getElementById('form-filtros').addEventListener('submit', function(evento) {
+  evento.preventDefault();
+  carregarEntregas();
+});
+
+document.getElementById('limpar-filtros').addEventListener('click', function() {
+  document.getElementById('form-filtros').reset();
+  carregarEntregas();
+});
