@@ -100,10 +100,20 @@
   </button>
 </form>
 
+<div style="margin-bottom: 12px;">
+  <button type="button"
+          id="marcar-selecionadas"
+          class="botao"
+          disabled>
+    Marcar selecionadas como entregues (0)
+  </button>
+</div>
+
     <div class="tabela-container">
       <table class="tabela">
         <thead>
           <tr>
+            <th>Selecionar</th>
             <th>Empresa</th>
             <th>Obrigação</th>
             <th>Departamento</th>
@@ -115,7 +125,7 @@
           </tr>
         </thead>
         <tbody id="lista-entregas">
-          <tr><td colspan="8" class="tabela__vazio">Carregando entregas…</td></tr>
+          <tr><td colspan="9" class="tabela__vazio">Carregando entregas…</td></tr>
         </tbody>
       </table>
     </div>

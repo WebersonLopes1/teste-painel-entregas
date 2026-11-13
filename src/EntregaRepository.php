@@ -139,6 +139,25 @@ public function cadastrar(int $empresaId, int $obrigacaoId, string $competencia,
 }
 
 
+public function marcarVariasComoEntregues(array $ids): int
+{
+    if (empty($ids)) {
+        return 0;
+    }
+
+    $marcadores = implode(',', array_fill(0, count($ids), '?'));
+
+    $sql = "UPDATE entregas
+            SET data_entrega = CURDATE()
+            WHERE id IN ($marcadores)
+              AND data_entrega IS NULL";
+
+    $consulta = $this->pdo->prepare($sql);
+    $consulta->execute($ids);
+
+    return $consulta->rowCount();
+}
+
     public function resumo(): array
     {
         $sql = "SELECT COUNT(*) AS total,

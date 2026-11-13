@@ -103,21 +103,32 @@ const resposta = await fetch(`${API}/entregas.php?${parametros}`);
     mostrarAviso('Não foi possível conectar à API.', 'erro');
   }
 
-  renderizarTabela();
+    renderizarTabela();
+  atualizarSelecionadas();
+
 }
 
 function renderizarTabela() {
   const corpo = document.getElementById('lista-entregas');
 
   if (entregas.length === 0) {
-    corpo.innerHTML = '<tr><td colspan="8" class="tabela__vazio">Nenhuma entrega encontrada.</td></tr>';
+    corpo.innerHTML = '<tr><td colspan="9" class="tabela__vazio">Nenhuma entrega encontrada.</td></tr>';
     return;
   }
 
-  corpo.innerHTML = entregas.map((entrega) => `
+  
+corpo.innerHTML = entregas.map((entrega) => `
     <tr>
       <td>
+        ${entrega.status !== 'entregue'
+          ? `<input type="checkbox"
+                    class="selecionar-entrega"
+                    value="${entrega.id}">`
+          : '—'}
+      </td>
+      <td>
         <span class="tabela__empresa">${escaparHtml(entrega.razao_social)}</span>
+
         <span class="tabela__cnpj">${escaparHtml(entrega.cnpj)}</span>
       </td>
       <td>${escaparHtml(entrega.obrigacao)}</td>
@@ -214,6 +225,57 @@ document.getElementById('form-cadastro').addEventListener('submit', async functi
 
     await carregarEntregas();
     await carregarResumo();
+
+  } catch (erro) {
+    mostrarAviso('Erro de comunicação com a API.', 'erro');
+  }
+});
+
+function atualizarSelecionadas() {
+  const quantidade = document.querySelectorAll(
+    '.selecionar-entrega:checked'
+  ).length;
+
+  const botao = document.getElementById('marcar-selecionadas');
+
+  botao.disabled = quantidade === 0;
+  botao.textContent = `Marcar selecionadas como entregues (${quantidade})`;
+}
+
+document.getElementById('lista-entregas').addEventListener('change', function(evento) {
+  if (evento.target.classList.contains('selecionar-entrega')) {
+    atualizarSelecionadas();
+  }
+});
+
+document.getElementById('marcar-selecionadas').addEventListener('click', async function() {
+  const ids = Array.from(
+    document.querySelectorAll('.selecionar-entrega:checked')
+  ).map(campo => Number(campo.value));
+
+  if (ids.length === 0) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`${API}/marcar_varias.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      mostrarAviso(dados.erro || 'Erro ao marcar entregas.', 'erro');
+      return;
+    }
+
+    mostrarAviso(dados.mensagem);
+
+    await carregarEntregas();
+    await carregarResumo();
+    atualizarSelecionadas();
 
   } catch (erro) {
     mostrarAviso('Erro de comunicação com a API.', 'erro');
